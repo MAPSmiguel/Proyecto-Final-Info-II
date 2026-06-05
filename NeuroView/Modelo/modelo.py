@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd  
 import scipy.io as sio
 import matplotlib.pyplot as plt
+
 class Modelo:
 
     def __init__(self):
@@ -112,13 +113,7 @@ class Modelo:
  
         return ruta_guardada
  
-        # Liberamos la cámara y cerramos la ventana
-        camara.release()
-        cv2.destroyAllWindows()
- 
-        return ruta_guardada 
-
-    # 9, 10, 11 
+        # 9, 10, 11 
 
  
     def cargarCSV(self, ruta):
@@ -157,7 +152,7 @@ class Modelo:
         #gráfico tipo plot de cada columna de manera individual.
         
         if self.df is None:
-            return
+            return None
  
         n = len(columnas)
         fig, axes = plt.subplots(1, n, figsize=(5 * n, 4))
@@ -174,22 +169,22 @@ class Modelo:
             ax.grid(True)
  
         fig.suptitle("Gráficos individuales por columna", fontsize=13)
-        plt.tight_layout()
-        plt.show()
+        fig.tight_layout()
+        return fig
  
     def graficarScatter(self, x, y):
         #Hace un scatter entre la columna x y la columna y del DataFrame.
         if self.df is None:
-            return
- 
-        plt.figure(figsize=(6, 5))
+            return None
+        fig, ax = plt.subplots(figsize=(6,5)) # con esto se crea la grafica 
         plt.scatter(self.df[x], self.df[y], alpha=0.6, edgecolors='k', linewidths=0.5)
         plt.xlabel(x)
         plt.ylabel(y)
         plt.title(f"Scatter: {x} vs {y}")
         plt.grid(True)
         plt.tight_layout()
-        plt.show()
+        fig.tigth_layout()
+        return fig # y aqui se retorna esa al controlodor 
      
 #8.SEÑALES .mat
  
@@ -202,9 +197,8 @@ class Modelo:
  
     def procesarCanales(self, inicio, fin):
         #selecciona los canales desde inicio hasta fin de la señal 2D y los grafica en la vista.
-        
         if self.senalObj is None:
-            return
+            return None
  
         # Extraemos el rango de canales pedido
         segmento = self.senalObj.datos2D[inicio:fin + 1, :]
@@ -220,14 +214,14 @@ class Modelo:
         ax.set_ylabel("Amplitud")
         ax.legend(loc="upper right", fontsize=7)
         ax.grid(True)
-        plt.tight_layout()
-        plt.show()
+        fig.tight_layout()
+        return fig
  
     def agregarRuido(self, canal):
         #toma un canal de la señal 2D, le suma ruido gaussiano y muestra en dos subplots la señal original y la modificada.
         
         if self.senalObj is None:
-            return
+            return None
  
         original  = self.senalObj.datos2D[canal, :]
  
@@ -249,41 +243,21 @@ class Modelo:
         ax2.grid(True)
  
         plt.suptitle("Señal original vs señal con ruido", fontsize=12)
-        plt.tight_layout()
-        plt.show()
+        fig.tight_layout()
+        return fig
  
     def estadisticasSenal(self, eje):
-        #calcula promedio y desviación estándar a lo largo del eje indicado
-        
         if self.senalObj is None:
             return
  
         promedio = np.mean(self.senalObj.datos3D, axis=eje)
         std      = np.std(self.senalObj.datos3D,  axis=eje)
  
-        # Si el resultado es multidimensional lo aplanamos para graficar
-        promedio = promedio.flatten()
-        std      = std.flatten()
- 
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
- 
-        # Stem para promedio
-        ax1.stem(promedio, linefmt="C0-", markerfmt="C0o", basefmt="k-")
-        ax1.set_title(f"Promedio — eje {eje}")
-        ax1.set_xlabel(f"Índice eje {eje}")
-        ax1.set_ylabel("Promedio")
-        ax1.grid(True)
- 
-        # Stem para desviación estándar
-        ax2.stem(std, linefmt="C1-", markerfmt="C1o", basefmt="k-")
-        ax2.set_title(f"Desviación estándar — eje {eje}")
-        ax2.set_xlabel(f"Índice eje {eje}")
-        ax2.set_ylabel("Std")
-        ax2.grid(True)
- 
-        plt.suptitle(f"Estadísticas sobre eje {eje}", fontsize=12)
-        plt.tight_layout()
-        plt.show()
+        # USAMOS:
+        promedio = promedio.reshape(-1)
+        std      = std.reshape(-1)
+        
+        # Ahora ya son vectores 1D perfectos para el ax.stem()
 
 # Atributos obligatorios
  
@@ -309,4 +283,5 @@ class ModeloSenal:
         # Aplanamos las primeras dimensiones dejando solo (canales, muestras)
         forma = self.datos3D.shape
         self.datos2D = self.datos3D.reshape(-1, forma[-1])
+
  

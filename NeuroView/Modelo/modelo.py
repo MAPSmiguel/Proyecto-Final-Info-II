@@ -247,16 +247,26 @@ class Modelo:
  
     def estadisticasSenal(self, eje):
         if self.senalObj is None:
-            return
- 
-        promedio = np.mean(self.senalObj.datos3D, axis=eje)
-        std      = np.std(self.senalObj.datos3D,  axis=eje)
- 
-        # USAMOS:
-        promedio = promedio.reshape(-1)
-        std      = std.reshape(-1)
-        
-        # falta el grafico stem
+            return None
+
+        prom, desviacion = self.senalObj.promYdesviacion(eje)
+
+        fig, (ax1, ax2) = plt.subplots(1,2, figsize=(10,4))
+
+        ax1.stem(prom)
+        ax1.set_title("Promedio")
+        ax1.set_xlabel("Índice")
+        ax1.set_ylabel("Valor")
+
+        ax2.stem(desviacion)
+        ax2.set_title("Desviación estándar")
+        ax2.set_xlabel("Índice")
+        ax2.set_ylabel("Valor")
+
+        fig.tight_layout()
+
+        return fig
+    #En esta parte se usa el atributo promYdesviación de la clase ModeloSenal para que cree los graficos stem
     def procesarRuido(self,canal, nivel_ruido):
         return self.senalobj.modificarRuido(canal,nivel_ruido)
 # Atributos obligatorios

@@ -274,3 +274,5 @@ class VistaDatos(QMainWindow):
 
     def setControlador(self, c):
         self.__controlador = c
+    def graficadoraCanvas(self,canvas):
+        pass

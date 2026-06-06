@@ -14,6 +14,7 @@ class Modelo:
         db_path = os.path.join(base_dir, "..", "neuroview.db")
         self.conexion = sqlite3.connect(db_path)
         self.cursor = self.conexion.cursor()
+        
 
         # Creamos la tabla de sesiones si no existe
         # Guarda id, ruta de la foto y fecha de la sesión
@@ -255,9 +256,9 @@ class Modelo:
         promedio = promedio.reshape(-1)
         std      = std.reshape(-1)
         
-        # Ahora ya son vectores 1D perfectos para el ax.stem()
+        # falta el grafico stem
     def procesarRuido(self,canal, nivel_ruido):
-        return self.sanlobj.modificarRuido(canal,nivel_ruido)
+        return self.senalobj.modificarRuido(canal,nivel_ruido)
 # Atributos obligatorios
  
 class ModeloSenal:

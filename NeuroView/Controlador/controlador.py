@@ -3,7 +3,7 @@
 # La vista le dice "el usuario hizo clic en X"
 # y el controlador decide que hacer: llama al modelo,
 # procesa la respuesta y le dice a la vista que mostrar.
-
+import os
 from PyQt5.QtWidgets import QMessageBox
 from Vista.vista import (
     VistaDashboard,
@@ -198,6 +198,7 @@ class Controlador:
                 QMessageBox.critical(self.__vistaDatos, "Error", f"Error al procesar el Excel: {str(e)}")
 
     def graficarScatter(self, x, y):
+
         # Este método se ejecutará cuando el usuario presione el botón "Graficar Scatter"
         if not x or not y:
             QMessageBox.warning(self.__vistaDatos, "Atención", "Debes seleccionar dos columnas válidas.")
@@ -211,3 +212,61 @@ class Controlador:
         # Convertimos a canvas e insertamos nativamente en la UI sin ventanas externas flotantes
         canvas = FigureCanvas(figura)
         self.__vistaDatos.mostrarScatterEnLayout(canvas)
+    def cargarTabulares(self):
+        ruta, _ = QFileDialog.getOpenFileName(self.vista, "Seleccionar Datos Tabulares", "", "Archivos (*.csv *.xlsx *.xls)")
+        if ruta:
+            _, extension = os.path.splitext(ruta)#nuevamente aplicamos esta función para identificar la ruta del archivo cargado
+            #se llaman los metodos desde la clase Modelo
+            if extension.lower() == '.csv':
+                # Si es un CSV, se activa el método para CSV
+                self.modelo.cargarCSV(ruta) 
+            elif extension.lower() in ['.xlsx', '.xls']:
+                # Si es Excel, activa el método para Excel
+                self.modelo.cargarExcel(ruta)
+            else:
+                print("Formato no compatible.")
+                return
+
+            filas, columnas, lista_cols, estadisticas = self.modelo.tabularObj.info_general()
+            
+            #se limpia y se lista los 4 ComboBox de la interfaz para que el usuario elija
+            self.vista.combo_col1.clear()
+            self.vista.combo_col2.clear()
+            self.vista.combo_col3.clear()
+            self.vista.combo_col4.clear()
+            
+            self.vista.combo_col1.addItems(lista_cols)
+            self.vista.combo_col2.addItems(lista_cols)
+            self.vista.combo_col3.addItems(lista_cols)
+            self.vista.combo_col4.addItems(lista_cols)
+            
+            #Mostramos el resumen de .describe() en el cuadro de texto de la interfaz
+            self.vista.txt_estadisticas.setText(estadisticas.to_string())
+            
+            print(f"Archivo cargado correctamente. Columnas listas para filtrar.")
+
+    def procesarFiltro_tabla(self):
+        if not hasattr(self.modelo, 'tabularObj'):
+            return
+            
+        c1 = self.vista.combo_col1.currentText()
+        c2 = self.vista.combo_col2.currentText()
+        c3 = self.vista.combo_col3.currentText()
+        c4 = self.vista.combo_col4.currentText()
+        
+        # se llama el método de filtrar del modelo
+        df_recortado = self.modelo.tabularObj.filtrar_col(c1, c2, c3, c4)
+        
+        # y aqui lo enviamos para que se vea en la tablas
+        self.interfazdf(df_recortado)
+
+    def interfazdf(self, dataframe):
+        tabla = self.vista.tabla_resultados
+        tabla.setRowCount(dataframe.shape[0])
+        tabla.setColumnCount(dataframe.shape[1])
+        tabla.setHorizontalHeaderLabels(dataframe.columns)
+        
+        for i in range(dataframe.shape[0]):
+            for j in range(dataframe.shape[1]):
+                valor = str(dataframe.iloc[i, j])
+                tabla.setItem(i, j, QTableWidgetItem(valor))

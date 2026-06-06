@@ -122,38 +122,46 @@ class Controlador:
 
     def cargarMat(self):
         #  abrir dialogo de archivo .mat y llamar al modelo
-        ruta_archivo, _ = QFileDialog.getOpenFileName(
-            self.__vistaSenales, "Seleccionar Archivo de Señal", "", "Archivos MAT (*.mat)")
-        if ruta_archivo:
-            try:
-                # 2. Llamamos al método de tu modelo que procesa las dimensiones
-                dimensiones_2d = self.__modelo.cargarMat(ruta_archivo) # Retorna (canales, muestras)
-                # 3. Notificamos a la vista que el archivo cargó con éxito
-                # (Opcional: Podrías usar esto para configurar los rangos de tus SpinBox o sliders en la UI)
-                QMessageBox.information(
-                    self.__vistaSenales, "Éxito", 
-                    f"Señal cargada correctamente.\nDimensiones de análisis 2D: {dimensiones_2d}")
-            except Exception as e:
-                QMessageBox.critical(self.__vistaSenales, "Error", f"No se pudo cargar el archivo .mat: {str(e)}")
+        ruta, _ = QFileDialog.getOpenFileName(self.__vistaSenales, "Seleccionar Archivo de Señal", "", "Archivos MAT (*.mat)")
+        if ruta:  
+            # Llamamos al metodo de la clase modelo
+            forma_2d = self.modelo.cargarMat(ruta)
+            print(f"Archivo cargado\nDimensiones 2D: {forma_2d}")
 
-    def procesarSenales(self, inicio, fin, tiempo_inicio, tiempo_fin):
-        try:
-            # 1. Le pedimos la figura procesada al modelo (con la corrección sin plt.show)
-            figura = self.__modelo.procesarCanales(inicio, fin, tiempo_inicio, tiempo_fin)
+    def procesar_senal(self):
+        # en este punto nos ayudamos para verificar que el usuario si seleccionó el RadioButton de ejes
+        if self.vista.rbtn_eje0.isChecked() or self.vista.rbtn_eje1.isChecked() or self.vista.rbtn_eje2.isChecked():
             
-            if figura is None:
-                QMessageBox.warning(self.__vistaSenales, "Atención", "Primero debes cargar un archivo .mat")
-                return
-            # 2. Convertimos la figura de Matplotlib en un Widget compatible con PyQt
-            canvas = FigureCanvas(figura)
+            # aqui se revisa cuál de los tres ejes seleccionó
+            if self.vista.rbtn_eje0.isChecked():
+                eje_elegido = 0
+            elif self.vista.rbtn_eje1.isChecked():
+                eje_elegido = 1
+            else:
+                eje_elegido = 2
+            #luego se llama al metodo promYdesviación
+            prom_v, des_v = self.modelo.senalObj.promYdesviación(eje_elegido)
+            print("Los promedios y desviaciones estan listos para graficar con stem.")
+            # Aquí se llama a la función de la vista para graficar prom_v y des_v con stem
+            self.vista.graficar_stem(prom_v, des_v)
+        # si el usuario no selecciona ejes, se verifica entonces si quiere seleccionar canales
+        elif self.vista.spin_canal_ini.value() != self.vista.spin_canal_fin.value():
             
-            # 3. Limpiamos y pintamos sobre el contenedor asignado en tu VistaSenales
-            # Asumiendo que en tu archivo VistaSenales creaste un método para renderizar el lienzo
-            self.__vistaSenales.mostrarGraficoEnLayout(canvas)
+            # Leemos los valores que el usuario puso en los QSpinBox de tu imagen
+            canal_i = self.vista.spin_canal_ini.value()
+            canal_f = self.vista.spin_canal_fin.value()
+            #luego se llama al metodo de seleccionarcanales
+            senal_recortada = self.modelo.senalObj.seleccionarCanales(canal_i, canal_f)
+            print(f"Canales recortados desde {canal_i} hasta {canal_f}.")
             
-        except Exception as e:
-            QMessageBox.critical(self.__vistaSenales, "Error de Procesamiento", str(e))
-
+        # aqui se modifica el ruido si el usuario no selecciona ninguna de las anteriores
+        else:
+            canal_ruido = self.vista.spin_canal_ini.value() 
+            nivel = 0.2 
+            # se llama al metodo modificarRuido
+            original, ruidosa = self.modelo.senalObj.modificarRuido(canal_ruido, nivel)
+            print("Señal original y con ruido generadas.")
+            
     # datos tabulares
 
     def cargarCSV(self):

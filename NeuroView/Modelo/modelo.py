@@ -189,11 +189,9 @@ class Modelo:
 #8.SEÑALES .mat
  
     def cargarMat(self, ruta):
-        
         #Carga un archivo .mat y crea un objeto ModeloSenal
-        
         self.senalObj = ModeloSenal(ruta)
-        return self.senalObj.datos2D.shape  # (canales, muestras)
+        return self.senalObj.datos2D.shape  # se retorna la info al controlador (canales, muestras)
  
     def procesarCanales(self, inicio, fin):
         #selecciona los canales desde inicio hasta fin de la señal 2D y los grafica en la vista.
@@ -258,7 +256,8 @@ class Modelo:
         std      = std.reshape(-1)
         
         # Ahora ya son vectores 1D perfectos para el ax.stem()
-
+    def procesarRuido(self,canal, nivel_ruido):
+        return self.sanlobj.modificarRuido(canal,nivel_ruido)
 # Atributos obligatorios
  
 class ModeloSenal:
@@ -266,22 +265,45 @@ class ModeloSenal:
     def __init__(self, ruta):
         #datos3D: matriz original tal como viene del .mat
         #datos2D: señal aplanada a 2 dimensiones (canales x muestras)
-    
         mat = sio.loadmat(ruta)
- 
+        #con esta parte el codigo busca la clave del diccionario
         clave = [k for k in mat.keys() if not k.startswith("__")][0]
         datos = mat[clave]
  
-        #matriz 3D original
-        # Si el archivo viene en 2D lo expandimos a 3D agregando una dimensión
+        # se almacena la matriz 3D original
+        # y sii el archivo viene en 2D lo expandimos a 3D agregando una dimensión
         if datos.ndim == 2:
             self.datos3D = datos[np.newaxis, :, :]  # (1, canales, muestras)
         else:
             self.datos3D = datos  # ya viene en 3D
  
         #  señal reshapeada a 2D 
-        # Aplanamos las primeras dimensiones dejando solo (canales, muestras)
+        # se aplana/modifica las primeras dimensiones dejando solo (canales, muestras)
         forma = self.datos3D.shape
         self.datos2D = self.datos3D.reshape(-1, forma[-1])
+    def seleccionarCanales(self, canal_ini, canal_fin):
+        #Aqui se trabaja con la señal 2D
+        senal_mod =self.datos2D[canal_ini : canal_fin + 1, :]# aqui se sumo 1 al canal final por los limites mmm
+        return senal_mod
 
+    def modificarRuido(self,canal,nivel_ruido):
+        #con este metodo se trabaja con la señal 2D
+        sen_original = self.datos2D[canal,:]
+        ruido = np.random.normal(0,nivel_ruido, sen_original.shape)
+        new_ruido = sen_original + ruido
+        #se retornan para que el controlador las lleve a graficar en los subplots
+        return sen_original, new_ruido
+    
+    def promYdesviación(self, eje):
+        #aqui se debe trabajar con la matriz 3D original
+        mat3d= self.datos3D
+        prom = np.mean(mat3d, axis=eje)# con la función mean calculamos el promedio del eje que el usuario eligio
+        desviacion= np.std(mat3d, axis=eje) #y esta es para la desviación estandar(que tan variados están los datos)
+        #aqui se ve la posibilidad que al palicar el mean o std a los ejes
+        #el resultado sea una matriz 2D por esta razon se transforma el resultado
+        #a un vector si llega a ser necesario
+        prom_vector = prom.flatten() #por lo anterior usamos la función flatten :) nos achata la matriz
+        desviacion_vector = desviacion.flatten()
+        #se retornan los dos vectores 
+        return prom_vector, desviacion_vector
  

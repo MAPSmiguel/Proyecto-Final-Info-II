@@ -120,7 +120,7 @@ class Modelo:
     def cargarCSV(self, ruta):
         #Carga un archivo CSV en self.df y retorna la lista de columnas para llenar en la vista.
         self.tabularObj = ModeloTabular(ruta)
-        self.df = pd.tabularObj.df
+        self.df = self.tabularObj.df
         return self.df.columns.tolist()
  
     def cargarExcel(self, ruta):
@@ -163,7 +163,7 @@ class Modelo:
         if self.df is None:
             return None
         fig, ax = plt.subplots(figsize=(6,5)) # con esto se crea la grafica 
-        plt.scatter(self.df[x], self.df[y], alpha=0.6, edgecolors='k', linewidths=0.5)
+        ax.scatter(self.df[x], self.df[y], alpha=0.6, edgecolors='k', linewidths=0.5)
         plt.xlabel(x)
         plt.ylabel(y)
         plt.title(f"Scatter: {x} vs {y}")
@@ -185,7 +185,7 @@ class Modelo:
             return None
  
         # Extraemos el rango de canales pedido
-        segmento = self.senalObj.datos2D[inicio:fin + 1, :]
+        segmento = self.senalObj.seleccionarCanales(inicio, fin)#aqui se aprovecho la encapsulación ya se creo el metodo seleccionarCanales()
  
         fig, ax = plt.subplots(figsize=(10, 4))
         for i, canal in enumerate(segmento):
@@ -253,7 +253,7 @@ class Modelo:
         return fig
     #En esta parte se usa el atributo promYdesviación de la clase ModeloSenal para que cree los graficos stem
     def procesarRuido(self,canal, nivel_ruido):
-        return self.senalobj.modificarRuido(canal,nivel_ruido)
+        return self.senalObj.modificarRuido(canal,nivel_ruido)
 # Atributos obligatorios
  
 class ModeloSenal:
@@ -290,7 +290,7 @@ class ModeloSenal:
         #se retornan para que el controlador las lleve a graficar en los subplots
         return sen_original, new_ruido
     
-    def promYdesviación(self, eje):
+    def promYdesviacion(self, eje):
         #aqui se debe trabajar con la matriz 3D original
         mat3d= self.datos3D
         prom = np.mean(mat3d, axis=eje)# con la función mean calculamos el promedio del eje que el usuario eligio

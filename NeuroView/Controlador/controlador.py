@@ -127,7 +127,7 @@ class Controlador:
         ruta, _ = QFileDialog.getOpenFileName(self.__vistaSenales, "Seleccionar Archivo de Señal", "", "Archivos MAT (*.mat)")
         if ruta:  
             # Llamamos al metodo de la clase modelo
-            forma_2d = self.modelo.cargarMat(ruta)
+            forma_2d = self.__modelo.cargarMat(ruta)
             print(f"Archivo cargado\nDimensiones 2D: {forma_2d}")
 
     def procesar_senal(self):
@@ -135,17 +135,17 @@ class Controlador:
         if self.__vistaSenales.rbtn_eje0.isChecked() or self.__vistaSenales.rbtn_eje1.isChecked() or self.__vistaSenales.rbtn_eje2.isChecked():
             
             # aqui se revisa cuál de los tres ejes seleccionó
-            if self.vista.rbtn_eje0.isChecked():
+            if self.__vistaSenales.rbtn_eje0.isChecked():
                 eje_elegido = 0
-            elif self.vista.rbtn_eje1.isChecked():
+            elif self.__vistaSenales.rbtn_eje1.isChecked():
                 eje_elegido = 1
             else:
                 eje_elegido = 2
             #luego se llama al metodo promYdesviación
-            prom_v, des_v = self.modelo.senalObj.promYdesviación(eje_elegido)
+            prom_v, des_v = self.__modelo.senalObj.promYdesviación(eje_elegido)
             print("Los promedios y desviaciones estan listos para graficar con stem.")
             # Aquí se llama a la función de la vista para graficar prom_v y des_v con stem
-            self.vista.graficar_stem(prom_v, des_v)
+            self.__vistaSenales.graficar_stem(prom_v, des_v)
         # si el usuario no selecciona ejes, se verifica entonces si quiere seleccionar canales
         elif self.vista.spin_canal_ini.value() != self.vista.spin_canal_fin.value():
             
@@ -167,9 +167,7 @@ class Controlador:
     # datos tabulares
 
     def cargarCSV(self):
-        ruta_archivo, _ = QFileDialog.getOpenFileName(
-            self.__vistaDatos, "Seleccionar Archivo CSV", "", "Archivos CSV (*.csv)"
-        )
+        ruta_archivo, _ = QFileDialog.getOpenFileName(self.__vistaDatos, "Seleccionar Archivo CSV", "", "Archivos CSV (*.csv)")
         if ruta_archivo:
             try:
                 # El modelo carga los datos y nos devuelve la lista con los nombres de las columnas
@@ -186,9 +184,7 @@ class Controlador:
                 QMessageBox.critical(self.__vistaDatos, "Error", f"Error al procesar el CSV: {str(e)}")
 
     def cargarExcel(self):
-        ruta_archivo, _ = QFileDialog.getOpenFileName(
-            self.__vistaDatos, "Seleccionar Archivo Excel", "", "Archivos Excel (*.xlsx *.xls)"
-        )
+        ruta_archivo, _ = QFileDialog.getOpenFileName(self.__vistaDatos, "Seleccionar Archivo Excel", "", "Archivos Excel (*.xlsx *.xls)")
         if ruta_archivo:
             try:
                 columnas = self.__modelo.cargarExcel(ruta_archivo)
@@ -214,39 +210,45 @@ class Controlador:
         # Convertimos a canvas e insertamos nativamente en la UI sin ventanas externas flotantes
         canvas = FigureCanvas(figura)
         self.__vistaDatos.mostrarScatterEnLayout(canvas)
+    
     def cargarTabulares(self):
-        ruta, _ = QFileDialog.getOpenFileName(self.vista, "Seleccionar Datos Tabulares", "", "Archivos (*.csv *.xlsx *.xls)")
+        # esta parte asegura que la ventana de datos esté activa
+        if self.__vistaDatos is None:
+            return
+            
+        ruta, _ = QFileDialog.getOpenFileName(self.__vistaDatos, "Seleccionar Datos Tabulares", "", "Archivos (*.csv *.xlsx *.xls)")
         if ruta:
-            _, extension = os.path.splitext(ruta)#nuevamente aplicamos esta función para identificar la ruta del archivo cargado
-            #se llaman los metodos desde la clase Modelo
+            _, extension = os.path.splitext(ruta)
+            
+            # El modelo carga el archivo y crea internamente el 'tabularObj'
             if extension.lower() == '.csv':
-                # Si es un CSV, se activa el método para CSV
-                self.modelo.cargarCSV(ruta) 
+                self.__modelo.cargarCSV(ruta) 
             elif extension.lower() in ['.xlsx', '.xls']:
-                # Si es Excel, activa el método para Excel
-                self.modelo.cargarExcel(ruta)
+                self.__modelo.cargarExcel(ruta)
             else:
                 print("Formato no compatible.")
                 return
 
-            filas, columnas, lista_cols, estadisticas = self.modelo.tabularObj.info_general()
+            info_tabla, estadisticas_tabla = self.__modelo.tabularObj.info_general()
             
-            #se limpia y se lista los 4 ComboBox de la interfaz para que el usuario elija
-            self.vista.combo_col1.clear()
-            self.vista.combo_col2.clear()
-            self.vista.combo_col3.clear()
-            self.vista.combo_col4.clear()
+            # se extraen las columnas,como info_tabla es un DataFrame,
+            # extraemos los nombres directamente de ahí y se convierten a una lista de Python.
+            lista_cols = info_tabla["Columna"].tolist()            
+            # se limpian y se listan los 4 ComboBox de la interfaz
+            self.__vistaDatos.combo_col1.clear()
+            self.__vistaDatos.combo_col2.clear()
+            self.__vistaDatos.combo_col3.clear()
+            self.__vistaDatos.combo_col4.clear()
             
-            self.vista.combo_col1.addItems(lista_cols)
-            self.vista.combo_col2.addItems(lista_cols)
-            self.vista.combo_col3.addItems(lista_cols)
-            self.vista.combo_col4.addItems(lista_cols)
+            self.__vistaDatos.combo_col1.addItems(lista_cols)
+            self.__vistaDatos.combo_col2.addItems(lista_cols)
+            self.__vistaDatos.combo_col3.addItems(lista_cols)
+            self.__vistaDatos.combo_col4.addItems(lista_cols)
             
-            #Mostramos el resumen de .describe() en el cuadro de texto de la interfaz
-            self.vista.txt_estadisticas.setText(estadisticas.to_string())
+            # se passan los Dataframes a la vista para graficar las tablas de estadisticas
+            self.__vistaDatos.mostrarEstadisticasTablas(info_tabla, estadisticas_tabla)
             
-            print(f"Archivo cargado correctamente. Columnas listas para filtrar.")
-
+            print(f"Archivo cargado correctamente. Tablas estadísticas y ComboBox actualizados.") 
     def procesarFiltro_tabla(self):
         if self.__vistaDatos is None or not hasattr(self.__modelo, 'tabularObj') or self.__modelo.tabularObj is None:
             return

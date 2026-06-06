@@ -331,15 +331,20 @@ class ModeloTabular:
         else:
             raise ValueError("Formato de archivo no soportado. Debe ser CSV o Excel.")
     def info_general(self):
-        num_filas, num_columnas = self.df.shape
-        columnas = list(self.df.columns) #en esta linea reemplazamos .info() ya que esta no devuelve texto
-        #como resultado la variable columnas quedaba vacia
-        # .describe() calcula automáticamente: media, desviación estándar, 
+        info_df = pd.DataFrame({
+
+            "Columna": self.df.columns, #aqui estan los nombres de las columnas
+            "Tipo": self.df.dtypes.astype(str).values, #aqui se convierten los tipos de texto para poderlos pasar al Dataframe
+            "No nulos": self.df.count(), #aqui se cuentan los valores que no son nulos o los espaioc NaN
+            "Nulos": self.df.isnull().sum()})#toda esta info es lo que hace .info() sino que esta función no devuleve en DataFrame por eso se hizo así
+
+        describe_df = self.df.describe().reset_index() # .describe() calcula automáticamente: media, desviación estándar, 
         # mínimos, máximos y percentiles de las columnas numéricas.
-        estadisticas = self.df.describe()
-        return num_filas, num_columnas, columnas, estadisticas
+        describe_df.rename(columns={"index":"Estadístico"}, inplace=True)
+        return info_df, describe_df
     def filtrar_col(self, col1, col2, col3, col4):
         # aqui se reciben los nombres de las columnas elegidas por el usuario
         #y luego se filtra el Dataframe original 
         df_filtrado = self.df[[col1, col2, col3, col4]]
         return df_filtrado
+    

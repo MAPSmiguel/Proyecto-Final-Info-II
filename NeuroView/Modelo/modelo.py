@@ -184,7 +184,7 @@ class Modelo:
         plt.title(f"Scatter: {x} vs {y}")
         plt.grid(True)
         plt.tight_layout()
-        fig.tigth_layout()
+        fig.tight_layout()
         return fig # y aqui se retorna esa al controlodor 
      
 #8.SEÑALES .mat

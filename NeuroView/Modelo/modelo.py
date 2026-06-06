@@ -306,4 +306,29 @@ class ModeloSenal:
         desviacion_vector = desviacion.flatten()
         #se retornan los dos vectores 
         return prom_vector, desviacion_vector
- 
+class ModeloTabular:
+    def __init__(self,ruta):
+    #cuando el usuario cargue el archivo la idea es que se guarde como dataframe (por eso aqui usamos pandas)
+        self.ruta = ruta      
+        _, extension = os.path.splitext(ruta) #en esta parte se guarda el tipo de extensión 
+                                              #en la variable para que pandas pueda leer cada formato
+        #DataFrame
+        if extension.lower() == '.csv':
+            self.df = pd.read_csv(ruta)
+        elif extension.lower() in ['.xlsx', '.xls']:
+            self.df = pd.read_excel(ruta)
+        else:
+            raise ValueError("Formato de archivo no soportado. Debe ser CSV o Excel.")
+    def info_general(self):
+        num_filas, num_columnas = self.df.shape
+        columnas = list(self.df.columns) #en esta linea reemplazamos .info() ya que esta no devuelve texto
+        #como resultado la variable columnas quedaba vacia
+        # .describe() calcula automáticamente: media, desviación estándar, 
+        # mínimos, máximos y percentiles de las columnas numéricas.
+        estadisticas = self.df.describe()
+        return num_filas, num_columnas, columnas, estadisticas
+    def filtrar_col(self, col1, col2, col3, col4):
+        # aqui se reciben los nombres de las columnas elegidas por el usuario
+        #y luego se filtra el Dataframe original 
+        df_filtrado = self.df[[col1, col2, col3, col4]]
+        return df_filtrado

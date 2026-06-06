@@ -122,6 +122,8 @@ class Controlador:
 
     def cargarMat(self):
         #  abrir dialogo de archivo .mat y llamar al modelo
+        if self.__vistaSenales is None:
+            return
         ruta, _ = QFileDialog.getOpenFileName(self.__vistaSenales, "Seleccionar Archivo de Señal", "", "Archivos MAT (*.mat)")
         if ruta:  
             # Llamamos al metodo de la clase modelo
@@ -130,7 +132,7 @@ class Controlador:
 
     def procesar_senal(self):
         # en este punto nos ayudamos para verificar que el usuario si seleccionó el RadioButton de ejes
-        if self.vista.rbtn_eje0.isChecked() or self.vista.rbtn_eje1.isChecked() or self.vista.rbtn_eje2.isChecked():
+        if self.__vistaSenales.rbtn_eje0.isChecked() or self.__vistaSenales.rbtn_eje1.isChecked() or self.__vistaSenales.rbtn_eje2.isChecked():
             
             # aqui se revisa cuál de los tres ejes seleccionó
             if self.vista.rbtn_eje0.isChecked():
@@ -148,8 +150,8 @@ class Controlador:
         elif self.vista.spin_canal_ini.value() != self.vista.spin_canal_fin.value():
             
             # Leemos los valores que el usuario puso en los QSpinBox de tu imagen
-            canal_i = self.vista.spin_canal_ini.value()
-            canal_f = self.vista.spin_canal_fin.value()
+            canal_i = self.__vistaSenales.spin_canal_ini.value()
+            canal_f = self.__vistaSenales.spin_canal_fin.value()
             #luego se llama al metodo de seleccionarcanales
             senal_recortada = self.modelo.senalObj.seleccionarCanales(canal_i, canal_f)
             print(f"Canales recortados desde {canal_i} hasta {canal_f}.")
@@ -246,22 +248,22 @@ class Controlador:
             print(f"Archivo cargado correctamente. Columnas listas para filtrar.")
 
     def procesarFiltro_tabla(self):
-        if not hasattr(self.modelo, 'tabularObj'):
+        if self.__vistaDatos is None or not hasattr(self.__modelo, 'tabularObj') or self.__modelo.tabularObj is None:
             return
             
-        c1 = self.vista.combo_col1.currentText()
-        c2 = self.vista.combo_col2.currentText()
-        c3 = self.vista.combo_col3.currentText()
-        c4 = self.vista.combo_col4.currentText()
+        # se lee los combos() de la vista datos
+        c1 = self.__vistaDatos.combo_col1.currentText()
+        c2 = self.__vistaDatos.combo_col2.currentText()
+        c3 = self.__vistaDatos.combo_col3.currentText()
+        c4 = self.__vistaDatos.combo_col4.currentText()
         
-        # se llama el método de filtrar del modelo
-        df_recortado = self.modelo.tabularObj.filtrar_col(c1, c2, c3, c4)
+        df_recortado = self.__modelo.tabularObj.filtrar_col(c1, c2, c3, c4)
         
-        # y aqui lo enviamos para que se vea en la tablas
+        #resultados en la tabla de la vista de datos
         self.interfazdf(df_recortado)
 
     def interfazdf(self, dataframe):
-        tabla = self.vista.tabla_resultados
+        tabla = self.__vistaDatos.tabla_resultados
         tabla.setRowCount(dataframe.shape[0])
         tabla.setColumnCount(dataframe.shape[1])
         tabla.setHorizontalHeaderLabels(dataframe.columns)

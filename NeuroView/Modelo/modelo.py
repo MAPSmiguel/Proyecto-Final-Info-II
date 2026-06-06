@@ -118,40 +118,25 @@ class Modelo:
 
  
     def cargarCSV(self, ruta):
-       
         #Carga un archivo CSV en self.df y retorna la lista de columnas para llenar en la vista.
-      
-        self.df = pd.read_csv(ruta)
+        self.tabularObj = ModeloTabular(ruta)
+        self.df = pd.tabularObj.df
         return self.df.columns.tolist()
  
     def cargarExcel(self, ruta):
         #Carga un archivo Excel en self.df y retorna la lista de columnas.
-    
-        self.df = pd.read_excel(ruta)
+        self.tabularObj = ModeloTabular(ruta)
+        self.df = self.tabularObj.df
         return self.df.columns.tolist()
  
     def obtenerInfoDescribe(self):
         #Retorna un DataFrame combinado con info() simulado y describe() para mostrarlo en un QTableWidget en la vista.
-        if self.df is None:
+        if self.tabularObj is None:
             return None
- 
-        # Construimos la tabla de info() manualmente
-        info_df = pd.DataFrame({
-            "Columna": self.df.columns,
-            "Tipo"   : self.df.dtypes.values.astype(str),
-            "No nulos": self.df.count().values,
-            "Nulos"  : self.df.isnull().sum().values
-        })
- 
-        # describe() trae estadísticas de columnas numéricas
-        describe_df = self.df.describe().reset_index()
-        describe_df.rename(columns={"index": "Estadístico"}, inplace=True)
- 
-        return info_df, describe_df
+        return self.tabularObj.info_general()
  
     def graficarColumnas(self, columnas):
         #gráfico tipo plot de cada columna de manera individual.
-        
         if self.df is None:
             return None
  
@@ -335,8 +320,8 @@ class ModeloTabular:
 
             "Columna": self.df.columns, #aqui estan los nombres de las columnas
             "Tipo": self.df.dtypes.astype(str).values, #aqui se convierten los tipos de texto para poderlos pasar al Dataframe
-            "No nulos": self.df.count(), #aqui se cuentan los valores que no son nulos o los espaioc NaN
-            "Nulos": self.df.isnull().sum()})#toda esta info es lo que hace .info() sino que esta función no devuleve en DataFrame por eso se hizo así
+            "No nulos": self.df.count().values, #aqui se cuentan los valores que no son nulos o los espaioc NaN
+            "Nulos": self.df.isnull().sum().values})#toda esta info es lo que hace .info() sino que esta función no devuleve en DataFrame por eso se hizo así
 
         describe_df = self.df.describe().reset_index() # .describe() calcula automáticamente: media, desviación estándar, 
         # mínimos, máximos y percentiles de las columnas numéricas.

@@ -221,8 +221,6 @@ class VistaSenales(QMainWindow):
 
     def setControlador(self, c):
         self.__controlador = c
-
-
 # El usuario carga un CSV o Excel con datos medicos,
 # ve la info/describe del archivo, hace plots y scatter.
 

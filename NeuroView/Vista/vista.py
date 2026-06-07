@@ -4,7 +4,7 @@ import sys
 from PyQt5.QtWidgets import (
     QApplication,
     QMainWindow,
-    QDialog, QVBoxLayout
+    QDialog, QVBoxLayout, QTableWidgetItem
 )
 
 from PyQt5.uic import loadUi
@@ -231,11 +231,11 @@ class VistaDatos(QMainWindow):
     def __init__(self):
         super().__init__()
         loadUi("Vista/datos.ui", self)
-
+        
         self.btnCargarCSV.clicked.connect(self.cargarCSV)
         self.btnCargarExcel.clicked.connect(self.cargarExcel)
         self.btnScatter.clicked.connect(self.scatter)
-
+    #esta parte es para conectar los botenes y cargar la vista de de datos.iu
     def cargarCSV(self):
         self.__controlador.cargarCSV()
 
@@ -250,7 +250,23 @@ class VistaDatos(QMainWindow):
         self.__controlador = c
 
     def mostrarDatos(self,info_df, describe_df):
-        pass    
+    #para la tabla de estaditicas
+        self.tablaDatos.setRowCount(describe_df.shape[0])
+        self.tablaDatos.setColumnCount(describe_df.shape[1])
+        self.tablaDatos.setHorizontalHeaderLabels(describe_df.columns.astype(str).tolist())
+        
+        for i in range(describe_df.shape[0]):
+            for j in range(describe_df.shape[1]):
+                self.tablaDatos.setItem(i, j, QTableWidgetItem(str(describe_df.iloc[i, j])))   
+    #para la tabla de indormación osea todo lo del .info()
+        self.tablaDatos_2.setRowCount(info_df.shape[0])
+        self.tablaDatos_2.setColumnCount(info_df.shape[1])
+        self.tablaDatos_2.setHorizontalHeaderLabels(info_df.columns.astype(str).tolist())
+
+        for i in range(info_df.shape[0]):
+            for j in range(info_df.shape[1]):
+                self.tablaDatos_2.setItem(i,j,QTableWidgetItem(str(info_df.iloc[i, j])))
+                
     def actualizarComboboxes(self, lista_columnas):
         self.cmbX.clear()
         self.cmbY.clear()

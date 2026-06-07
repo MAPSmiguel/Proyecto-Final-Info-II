@@ -17,8 +17,8 @@
    <widget class="QFrame" name="frame">
     <property name="geometry">
      <rect>
-      <x>-210</x>
-      <y>-100</y>
+      <x>-220</x>
+      <y>-120</y>
       <width>1911</width>
       <height>1131</height>
      </rect>
@@ -27,10 +27,10 @@
      <string notr="true">background-color: #D6EAF8;</string>
     </property>
     <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
+     <enum>QFrame::Shape::StyledPanel</enum>
     </property>
     <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
+     <enum>QFrame::Shadow::Raised</enum>
     </property>
     <widget class="QLabel" name="label">
      <property name="geometry">
@@ -44,7 +44,6 @@
      <property name="font">
       <font>
        <pointsize>14</pointsize>
-       <weight>75</weight>
        <italic>true</italic>
        <bold>true</bold>
       </font>
@@ -56,8 +55,8 @@
     <widget class="QPushButton" name="btnCargarCSV">
      <property name="geometry">
       <rect>
-       <x>290</x>
-       <y>240</y>
+       <x>260</x>
+       <y>220</y>
        <width>93</width>
        <height>28</height>
       </rect>
@@ -74,8 +73,8 @@ background:white;</string>
     <widget class="QPushButton" name="btnCargarExcel">
      <property name="geometry">
       <rect>
-       <x>420</x>
-       <y>240</y>
+       <x>400</x>
+       <y>220</y>
        <width>93</width>
        <height>28</height>
       </rect>
@@ -92,8 +91,8 @@ background:white;</string>
     <widget class="QLabel" name="label_2">
      <property name="geometry">
       <rect>
-       <x>290</x>
-       <y>300</y>
+       <x>260</x>
+       <y>270</y>
        <width>151</width>
        <height>31</height>
       </rect>
@@ -110,9 +109,9 @@ background:white;</string>
     <widget class="QTableWidget" name="tablaDatos">
      <property name="geometry">
       <rect>
-       <x>280</x>
+       <x>260</x>
        <y>360</y>
-       <width>700</width>
+       <width>421</width>
        <height>250</height>
       </rect>
      </property>
@@ -214,8 +213,8 @@ background:white;</string>
     <widget class="QLabel" name="label_5">
      <property name="geometry">
       <rect>
-       <x>290</x>
-       <y>155</y>
+       <x>260</x>
+       <y>150</y>
        <width>261</width>
        <height>51</height>
       </rect>
@@ -227,6 +226,47 @@ background:white;</string>
      </property>
      <property name="text">
       <string>Seleccion la opcion deseada:</string>
+     </property>
+    </widget>
+    <widget class="QTableWidget" name="tablaInfo">
+     <property name="geometry">
+      <rect>
+       <x>720</x>
+       <y>360</y>
+       <width>411</width>
+       <height>250</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border:2px solid black;
+
+background:white;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_6">
+     <property name="geometry">
+      <rect>
+       <x>720</x>
+       <y>330</y>
+       <width>101</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Información</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_7">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>330</y>
+       <width>81</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Estadisticas</string>
      </property>
     </widget>
    </widget>

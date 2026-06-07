@@ -4,7 +4,8 @@
 # y el controlador decide que hacer: llama al modelo,
 # procesa la respuesta y le dice a la vista que mostrar.
 import os
-from PyQt5.QtWidgets import QMessageBox
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas #importación adicional para usar la función canvas :)
+from PyQt5.QtWidgets import QMessageBox, QFileDialog, QTableWidgetItem
 from Vista.vista import (
     VistaDashboard,
     VistaDicom,
@@ -129,15 +130,15 @@ class Controlador:
             # Llamamos al metodo de la clase modelo
             forma_2d = self.__modelo.cargarMat(ruta)
             print(f"Archivo cargado\nDimensiones 2D: {forma_2d}")
-
+#revisar
     def procesar_senal(self):
         # en este punto nos ayudamos para verificar que el usuario si seleccionó el RadioButton de ejes
-        if self.__vistaSenales.rbtn_eje0.isChecked() or self.__vistaSenales.rbtn_eje1.isChecked() or self.__vistaSenales.rbtn_eje2.isChecked():
+        if self.__vistaSenales.radioEje0.isChecked() or self.__vistaSenales.radioEje1.isChecked() or self.__vistaSenales.radioEje2.isChecked():
             
             # aqui se revisa cuál de los tres ejes seleccionó
-            if self.__vistaSenales.rbtn_eje0.isChecked():
+            if self.__vistaSenales.radioEje0.isChecked():
                 eje_elegido = 0
-            elif self.__vistaSenales.rbtn_eje1.isChecked():
+            elif self.__vistaSenales.radioEje1.isChecked():
                 eje_elegido = 1
             else:
                 eje_elegido = 2
@@ -147,21 +148,21 @@ class Controlador:
             # Aquí se llama a la función de la vista para graficar prom_v y des_v con stem
             self.__vistaSenales.graficar_stem(prom_v, des_v)
         # si el usuario no selecciona ejes, se verifica entonces si quiere seleccionar canales
-        elif self.vista.spin_canal_ini.value() != self.vista.spin_canal_fin.value():
+        elif self.__vistaSenales.spinCanalInicial.value() != self.__vistaSenales.spinCanalFinal.value():
             
             # Leemos los valores que el usuario puso en los QSpinBox de tu imagen
-            canal_i = self.__vistaSenales.spin_canal_ini.value()
-            canal_f = self.__vistaSenales.spin_canal_fin.value()
+            canal_i = self.__vistaSenales.spinCanalInicial.value()
+            canal_f = self.__vistaSenales.spinCanalFinal.value()
             #luego se llama al metodo de seleccionarcanales
-            senal_recortada = self.modelo.senalObj.seleccionarCanales(canal_i, canal_f)
+            senal_recortada = self.__modelo.senalObj.seleccionarCanales(canal_i, canal_f)
             print(f"Canales recortados desde {canal_i} hasta {canal_f}.")
             
         # aqui se modifica el ruido si el usuario no selecciona ninguna de las anteriores
         else:
-            canal_ruido = self.vista.spin_canal_ini.value() 
+            canal_ruido = self.__vistaSenales.spinCanalInicial.value() 
             nivel = 0.2 
             # se llama al metodo modificarRuido
-            original, ruidosa = self.modelo.senalObj.modificarRuido(canal_ruido, nivel)
+            original, ruidosa = self.__modelo.senalObj.modificarRuido(canal_ruido, nivel)
             print("Señal original y con ruido generadas.")
             
     # datos tabulares
@@ -208,7 +209,9 @@ class Controlador:
             return
             
         # Convertimos a canvas e insertamos nativamente en la UI sin ventanas externas flotantes
-        canvas = FigureCanvas(figura)
+        canvas = FigureCanvas(figura) # esta es una función de matplotlib, 
+        #la verdad es muy util ya que toma la figura de matplotlib y la transforma en un widget de pyQt, 
+        #en otras palabras es como si rellenara el marco blanco de QTdesigner (hay que hacer una importacion para usarla)
         self.__vistaDatos.mostrarScatterEnLayout(canvas)
     
     def cargarTabulares(self):

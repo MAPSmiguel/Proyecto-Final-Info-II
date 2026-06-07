@@ -4,7 +4,7 @@ import sys
 from PyQt5.QtWidgets import (
     QApplication,
     QMainWindow,
-    QDialog
+    QDialog, QVBoxLayout
 )
 
 from PyQt5.uic import loadUi
@@ -208,32 +208,16 @@ class VistaSenales(QMainWindow):
         super().__init__()
         loadUi("Vista/senales.ui", self)
 
-        self.btnCargarMat.clicked.connect(
-            self.cargarMat
-        )
-
-        self.btnProcesar.clicked.connect(
-            self.procesar
-        )
+        self.btnCargarMat.clicked.connect(self.cargarMat)
+        self.btnProcesar.clicked.connect(self.procesar)
 
     def cargarMat(self):
         self.__controlador.cargarMat()
 
     def procesar(self):
-        # Leemos los valores de los controles de la interfaz
-        inicio = self.spinCanalInicial.value()
-        fin    = self.spinCanalFinal.value()
-
-        # Los RadioButtons dicen sobre que eje queremos calcular
-        # el promedio y desviacion estandar (requerimiento 8c )
-        if self.radioEje0.isChecked():
-            eje = 0
-        elif self.radioEje1.isChecked():
-            eje = 1
-        else:
-            eje = 2
-
-        self.__controlador.procesarSenales(inicio, fin, eje)
+        #aqui la vista le indica al controlador que el usuario seleccionó procesar
+        #entonces el controlador se encarga de leer y devolver la señal procesada
+        self.__controlador.procesar_senal()
 
     def setControlador(self, c):
         self.__controlador = c
@@ -248,17 +232,9 @@ class VistaDatos(QMainWindow):
         super().__init__()
         loadUi("Vista/datos.ui", self)
 
-        self.btnCargarCSV.clicked.connect(
-            self.cargarCSV
-        )
-
-        self.btnCargarExcel.clicked.connect(
-            self.cargarExcel
-        )
-
-        self.btnScatter.clicked.connect(
-            self.scatter
-        )
+        self.btnCargarCSV.clicked.connect(self.cargarCSV)
+        self.btnCargarExcel.clicked.connect(self.cargarExcel)
+        self.btnScatter.clicked.connect(self.scatter)
 
     def cargarCSV(self):
         self.__controlador.cargarCSV()
@@ -268,11 +244,31 @@ class VistaDatos(QMainWindow):
 
     def scatter(self):
         # Leemos las dos columnas elegidas por el usuario en los combos
-        x = self.cmbX.currentText()
-        y = self.cmbY.currentText()
-        self.__controlador.graficarScatter(x, y)
+        self.__controlador.graficarScatter()
 
     def setControlador(self, c):
         self.__controlador = c
+
+    def mostrarDatos(self,info_df, describe_df):
+        pass    
+    def actualizarComboboxes(self, lista_columnas):
+        self.cmbX.clear()
+        self.cmbY.clear()
+        self.cmbX.addItems(lista_columnas)
+        self.cmbY.addItems(lista_columnas)
+        
     def graficadoraCanvas(self,canvas):
-        pass
+        # aqui si limpian los graficos si ya existen para que no se superpongan
+        if self.widget.layout() is not None:
+            # Esta línea borra limpiamente el gráfico anterior de la pantalla
+            while self.widget.layout().count():
+                item = self.widget.layout().takeAt(0)
+                if item.widget():
+                    item.widget().deleteLater()
+        else:
+            # Si es la primera vez que graficamos, le creamos un contenedor interno (Layout)
+            layout_interno = QVBoxLayout(self.widget)
+            self.widget.setLayout(layout_interno)
+        
+        # Metemos el lienzo (canvas) que nos pasaron dentro de nuestro 'widget'
+        self.widget.layout().addWidget(canvas)# con esta parte se evita que salgan ventanas emergentes plt.show()

@@ -75,13 +75,15 @@ class Controlador:
         self.__vistaDicom.show() #mostramos
 
     def abrirModuloSenales(self):
-        self.__vistaSenales = VistaSenales()
-        self.__vistaSenales.setControlador(self)
+        if self.__vistaSenales is None:
+            self.__vistaSenales = VistaSenales()
+            self.__vistaSenales.setControlador(self)
         self.__vistaSenales.show()
 
     def abrirModuloDatos(self):
-        self.__vistaDatos = VistaDatos()
-        self.__vistaDatos.setControlador(self)
+        if self.__vistaDatos is None:
+            self.__vistaDatos = VistaDatos()
+            self.__vistaDatos.setControlador(self)
         self.__vistaDatos.show()
 
 
@@ -120,7 +122,6 @@ class Controlador:
 
         #metodos de señales
 
-
     def cargarMat(self):
         #  abrir dialogo de archivo .mat y llamar al modelo
         if self.__vistaSenales is None:
@@ -130,7 +131,6 @@ class Controlador:
             # Llamamos al metodo de la clase modelo
             forma_2d = self.__modelo.cargarMat(ruta)
             print(f"Archivo cargado\nDimensiones 2D: {forma_2d}")
-#revisar
     def procesar_senal(self):
         # en este punto nos ayudamos para verificar que el usuario si seleccionó el RadioButton de ejes
         if self.__vistaSenales.radioEje0.isChecked() or self.__vistaSenales.radioEje1.isChecked() or self.__vistaSenales.radioEje2.isChecked():
@@ -164,7 +164,7 @@ class Controlador:
             # se llama al metodo modificarRuido
             original, ruidosa = self.__modelo.senalObj.modificarRuido(canal_ruido, nivel)
             print("Señal original y con ruido generadas.")
-            
+     
     # datos tabulares
 
     def cargarCSV(self):
@@ -178,8 +178,8 @@ class Controlador:
                 info_df, describe_df = self.__modelo.obtenerInfoDescribe()
                 
                 # Le ordenamos a la vista actualizar sus tablas visuales y cargar los ComboBox
-                self.__vistaDatos.actualizarComboColumnas(columnas)
-                self.__vistaDatos.mostrarEstadisticasTablas(info_df, describe_df)
+                self.__vistaDatos.actualizarComboboxes(columnas)
+                self.__vistaDatos.mostrarDatos(info_df, describe_df)
                 
             except Exception as e:
                 QMessageBox.critical(self.__vistaDatos, "Error", f"Error al procesar el CSV: {str(e)}")
@@ -190,35 +190,26 @@ class Controlador:
             try:
                 columnas = self.__modelo.cargarExcel(ruta_archivo)
                 info_df, describe_df = self.__modelo.obtenerInfoDescribe()
-                
-                self.__vistaDatos.actualizarComboColumnas(columnas)
-                self.__vistaDatos.mostrarEstadisticasTablas(info_df, describe_df)
+                self.__vistaDatos.actualizarComboboxes(columnas)
+                self.__vistaDatos.mostrarDatos(info_df, describe_df)
             except Exception as e:
                 QMessageBox.critical(self.__vistaDatos, "Error", f"Error al procesar el Excel: {str(e)}")
 
     def graficarScatter(self, x, y):
-
-        # Este método se ejecutará cuando el usuario presione el botón "Graficar Scatter"
-        if not x or not y:
-            QMessageBox.warning(self.__vistaDatos, "Atención", "Debes seleccionar dos columnas válidas.")
-            return
-            
+        x = self.__vistaDatos.cmbX.currentText()
+        y = self.__vistaDatos.cmbY.currentText()
         figura = self.__modelo.graficarScatter(x, y)
-        if figura is None:
-            QMessageBox.warning(self.__vistaDatos, "Atención", "No hay datos cargados para graficar.")
-            return
-            
-        # Convertimos a canvas e insertamos nativamente en la UI sin ventanas externas flotantes
-        canvas = FigureCanvas(figura) # esta es una función de matplotlib, 
+        if figura:
+            canvas = FigureCanvas(figura)
+            self.__vistaDatos.graficadoraCanvas(canvas)
+        #FigureCanvas  es una función de matplotlib, 
         #la verdad es muy util ya que toma la figura de matplotlib y la transforma en un widget de pyQt, 
         #en otras palabras es como si rellenara el marco blanco de QTdesigner (hay que hacer una importacion para usarla)
-        self.__vistaDatos.mostrarScatterEnLayout(canvas)
     
     def cargarTabulares(self):
         # esta parte asegura que la ventana de datos esté activa
         if self.__vistaDatos is None:
-            return
-            
+            return 
         ruta, _ = QFileDialog.getOpenFileName(self.__vistaDatos, "Seleccionar Datos Tabulares", "", "Archivos (*.csv *.xlsx *.xls)")
         if ruta:
             _, extension = os.path.splitext(ruta)
@@ -263,7 +254,6 @@ class Controlador:
         c4 = self.__vistaDatos.combo_col4.currentText()
         
         df_recortado = self.__modelo.tabularObj.filtrar_col(c1, c2, c3, c4)
-        
         #resultados en la tabla de la vista de datos
         self.interfazdf(df_recortado)
 

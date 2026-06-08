@@ -8,7 +8,8 @@ from PyQt5.QtWidgets import (
 )
 import matplotlib.pyplot as plt
 from PyQt5.uic import loadUi
-
+# Ruta absoluta a la carpeta Vista/ — funciona sin importar desde dónde se corra
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 class VistaBienvenida(QMainWindow):
 
     def __init__(self):

@@ -1,6 +1,6 @@
 
 import sys
-
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt5.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -270,6 +270,33 @@ class VistaDatos(QMainWindow):
         self.cmbY.clear()
         self.cmbX.addItems(lista_columnas)
         self.cmbY.addItems(lista_columnas)
+
+    def graficar_stem(self, prom_v, des_v):
+        fig, ax = plt.subplots()
+        
+        # 2. Dibujamos con la función .stem() que nos pide el requerimiento
+        ax.stem(prom_v, linefmt='b-', markerfmt='bo', label='Promedio')
+        ax.stem(des_v, linefmt='g--', markerfmt='gx', label='Desviación')
+        ax.set_title("Promedio y Desviación Estándar")
+        ax.legend()  # Muestra el cuadrito de etiquetas
+
+        # 3. Ponemos el dibujo en el "marco" de PyQt (Canvas)
+        canvas = FigureCanvas(fig)
+
+        # 4. Buscamos el contenedor gris de tu imagen (widgetGraficaProcesada)
+        # Si no tiene layout, se lo creamos en vertical
+        if self.widgetGraficaProcesada.layout() is None:
+            from PyQt5.QtWidgets import QVBoxLayout
+            layout = QVBoxLayout(self.widgetGraficaProcesada)
+            self.widgetGraficaProcesada.setLayout(layout)
+        else:
+            layout = self.widgetGraficaProcesada.layout()
+            # Borramos el gráfico que se haya pintado antes para que no se superpongan
+            for i in reversed(range(layout.count())): 
+                layout.itemAt(i).widget().setParent(None)
+
+        # 5. ¡Listo! Añadimos el gráfico al espacio de la pantalla
+        layout.addWidget(canvas)
         
     def graficadoraCanvas(self,canvas):
         # aqui si limpian los graficos si ya existen para que no se superpongan

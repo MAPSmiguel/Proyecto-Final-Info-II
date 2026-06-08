@@ -327,9 +327,9 @@ class ModeloTabular:
         # mínimos, máximos y percentiles de las columnas numéricas.
         describe_df.rename(columns={"index":"Estadístico"}, inplace=True)
         return info_df, describe_df
-    def filtrar_col(self, col1, col2, col3, col4):
+    def filtrar_col(self, col1, col2):
         # aqui se reciben los nombres de las columnas elegidas por el usuario
         #y luego se filtra el Dataframe original 
-        df_filtrado = self.df[[col1, col2, col3, col4]]
+        df_filtrado = self.df[[col1, col2]]
         return df_filtrado
     

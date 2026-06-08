@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1054</width>
+    <height>1093</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>-470</x>
+      <y>-370</y>
+      <width>2151</width>
+      <height>1411</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: #D6EAF8;</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Shape::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Shadow::Raised</enum>
+    </property>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>710</x>
+       <y>390</y>
+       <width>401</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Procesamiento de Señales Biomedicas</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnCargarMat">
+     <property name="geometry">
+      <rect>
+       <x>570</x>
+       <y>480</y>
+       <width>191</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Cargar Archivo.mat</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="widgetGraficaOriginal" native="true">
+     <property name="geometry">
+      <rect>
+       <x>560</x>
+       <y>600</y>
+       <width>691</width>
+       <height>231</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border: 2px solid black;
+background-color: white;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>580</x>
+       <y>560</y>
+       <width>161</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: white;</string>
+     </property>
+     <property name="text">
+      <string>Señal Original  </string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>570</x>
+       <y>870</y>
+       <width>161</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: white;</string>
+     </property>
+     <property name="text">
+      <string> Señal Procesada </string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="widgetGraficaProcesada" native="true">
+     <property name="geometry">
+      <rect>
+       <x>560</x>
+       <y>900</y>
+       <width>691</width>
+       <height>231</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border: 2px solid black;
+background-color: white;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>570</x>
+       <y>1150</y>
+       <width>151</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Canal Inicial</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spinCanalInicial">
+     <property name="geometry">
+      <rect>
+       <x>580</x>
+       <y>1190</y>
+       <width>42</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>700</x>
+       <y>1150</y>
+       <width>151</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Canal Final</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spinCanalFinal">
+     <property name="geometry">
+      <rect>
+       <x>720</x>
+       <y>1190</y>
+       <width>42</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_6">
+     <property name="geometry">
+      <rect>
+       <x>570</x>
+       <y>1240</y>
+       <width>121</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Seleccionar eje</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioEje0">
+     <property name="geometry">
+      <rect>
+       <x>570</x>
+       <y>1290</y>
+       <width>95</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Eje 0</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioEje1">
+     <property name="geometry">
+      <rect>
+       <x>750</x>
+       <y>1290</y>
+       <width>95</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Eje 1</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioEje2">
+     <property name="geometry">
+      <rect>
+       <x>910</x>
+       <y>1290</y>
+       <width>95</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Eje 2</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnProcesar">
+     <property name="geometry">
+      <rect>
+       <x>910</x>
+       <y>1330</y>
+       <width>141</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border: 2px solid black;
+background-color: white;</string>
+     </property>
+     <property name="text">
+      <string>Procesar la señal</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1054</width>
+     <height>26</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

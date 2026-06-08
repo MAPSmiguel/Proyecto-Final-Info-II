@@ -123,7 +123,7 @@ class Controlador:
         #metodos de señales
 
     def cargarMat(self):
-        #  abrir dialogo de archivo .mat y llamar al modelo
+        #abrir dialogo de archivo .mat y llamar al modelo
         if self.__vistaSenales is None:
             return
         ruta, _ = QFileDialog.getOpenFileName(self.__vistaSenales, "Seleccionar Archivo de Señal", "", "Archivos MAT (*.mat)")
@@ -131,6 +131,7 @@ class Controlador:
             # Llamamos al metodo de la clase modelo
             forma_2d = self.__modelo.cargarMat(ruta)
             print(f"Archivo cargado\nDimensiones 2D: {forma_2d}")
+
     def procesar_senal(self):
         # en este punto nos ayudamos para verificar que el usuario si seleccionó el RadioButton de ejes
         if self.__vistaSenales.radioEje0.isChecked() or self.__vistaSenales.radioEje1.isChecked() or self.__vistaSenales.radioEje2.isChecked():
@@ -148,39 +149,19 @@ class Controlador:
             # Aquí se llama a la función de la vista para graficar prom_v y des_v con stem
             self.__vistaSenales.graficar_stem(prom_v, des_v)
         # si el usuario no selecciona ejes, se verifica entonces si quiere seleccionar canales
-        elif self.__vistaSenales.spinCanalInicial.value() != self.__vistaSenales.spinCanalFinal.value():
-            
-            # Leemos los valores que el usuario puso en los QSpinBox de tu imagen
-            canal_i = self.__vistaSenales.spinCanalInicial.value()
-            canal_f = self.__vistaSenales.spinCanalFinal.value()
-            #luego se llama al metodo de seleccionarcanales
-            senal_recortada = self.__modelo.senalObj.seleccionarCanales(canal_i, canal_f)
-            print(f"Canales recortados desde {canal_i} hasta {canal_f}.")
-            
-        # aqui se modifica el ruido si el usuario no selecciona ninguna de las anteriores
-        else:
-            canal_ruido = self.__vistaSenales.spinCanalInicial.value() 
-            nivel = 0.2 
-            # se llama al metodo modificarRuido
-            original, ruidosa = self.__modelo.senalObj.modificarRuido(canal_ruido, nivel)
-            print("Señal original y con ruido generadas.")
      
     # datos tabulares
-
     def cargarCSV(self):
         ruta_archivo, _ = QFileDialog.getOpenFileName(self.__vistaDatos, "Seleccionar Archivo CSV", "", "Archivos CSV (*.csv)")
         if ruta_archivo:
             try:
                 # El modelo carga los datos y nos devuelve la lista con los nombres de las columnas
                 columnas = self.__modelo.cargarCSV(ruta_archivo)
-                
                 # Le pedimos al modelo los DataFrames estadísticos calculados
                 info_df, describe_df = self.__modelo.obtenerInfoDescribe()
-                
                 # Le ordenamos a la vista actualizar sus tablas visuales y cargar los ComboBox
                 self.__vistaDatos.actualizarComboboxes(columnas)
                 self.__vistaDatos.mostrarDatos(info_df, describe_df)
-                
             except Exception as e:
                 QMessageBox.critical(self.__vistaDatos, "Error", f"Error al procesar el CSV: {str(e)}")
 
@@ -189,7 +170,7 @@ class Controlador:
         if ruta_archivo:
             try:
                 columnas = self.__modelo.cargarExcel(ruta_archivo)
-                info_df, describe_df = self.__modelo.obtenerInfoDescribe()
+                info_df, describe_df = self.__modelo.info_general()
                 self.__vistaDatos.actualizarComboboxes(columnas)
                 self.__vistaDatos.mostrarDatos(info_df, describe_df)
             except Exception as e:
@@ -205,7 +186,7 @@ class Controlador:
         #FigureCanvas  es una función de matplotlib, 
         #la verdad es muy util ya que toma la figura de matplotlib y la transforma en un widget de pyQt, 
         #en otras palabras es como si rellenara el marco blanco de QTdesigner (hay que hacer una importacion para usarla)
-    
+#revisar  
     def cargarTabulares(self):
         # esta parte asegura que la ventana de datos esté activa
         if self.__vistaDatos is None:
@@ -228,32 +209,28 @@ class Controlador:
             # se extraen las columnas,como info_tabla es un DataFrame,
             # extraemos los nombres directamente de ahí y se convierten a una lista de Python.
             lista_cols = info_tabla["Columna"].tolist()            
-            # se limpian y se listan los 4 ComboBox de la interfaz
-            self.__vistaDatos.combo_col1.clear()
-            self.__vistaDatos.combo_col2.clear()
-            self.__vistaDatos.combo_col3.clear()
-            self.__vistaDatos.combo_col4.clear()
-            
-            self.__vistaDatos.combo_col1.addItems(lista_cols)
-            self.__vistaDatos.combo_col2.addItems(lista_cols)
-            self.__vistaDatos.combo_col3.addItems(lista_cols)
-            self.__vistaDatos.combo_col4.addItems(lista_cols)
+            # se limpian y se listan los  2 ComboBox de la interfaz
+            self.__vistaDatos.cmbX.clear()
+            self.__vistaDatos.cmbY.clear()
+        
+            self.__vistaDatos.cmbX.addItems(lista_cols)
+            self.__vistaDatos.cmbY.addItems(lista_cols)
             
             # se passan los Dataframes a la vista para graficar las tablas de estadisticas
             self.__vistaDatos.mostrarEstadisticasTablas(info_tabla, estadisticas_tabla)
             
             print(f"Archivo cargado correctamente. Tablas estadísticas y ComboBox actualizados.") 
+#REVISAR
     def procesarFiltro_tabla(self):
         if self.__vistaDatos is None or not hasattr(self.__modelo, 'tabularObj') or self.__modelo.tabularObj is None:
             return
             
         # se lee los combos() de la vista datos
-        c1 = self.__vistaDatos.combo_col1.currentText()
-        c2 = self.__vistaDatos.combo_col2.currentText()
-        c3 = self.__vistaDatos.combo_col3.currentText()
-        c4 = self.__vistaDatos.combo_col4.currentText()
+        c1 = self.__vistaDatos.cmbX.currentText()
+        c2 = self.__vistaDatos.cmbY.currentText()
         
-        df_recortado = self.__modelo.tabularObj.filtrar_col(c1, c2, c3, c4)
+        
+        df_recortado = self.__modelo.tabularObj.filtrar_col(c1, c2)
         #resultados en la tabla de la vista de datos
         self.interfazdf(df_recortado)
 

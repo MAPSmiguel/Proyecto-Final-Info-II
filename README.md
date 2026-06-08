@@ -42,6 +42,7 @@ Este proyecto busca integrar diferentes herramientas de procesamiento y visualiz
 
 ## Referencias Bibliográficas
 Archivos utilizados extraidos de la plataforma Kaggle:
+
 https://www.kaggle.com/datasets/s3programmerlead/multimodal-dataset-for-depression-analysis
 https://www.kaggle.com/datasets/ahmeduzaki/eeg-eye-state-detection-dataset
 

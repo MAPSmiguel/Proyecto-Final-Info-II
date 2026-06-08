@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import (
     QMainWindow,
     QDialog, QVBoxLayout, QTableWidgetItem
 )
-
+import matplotlib.pyplot as plt
 from PyQt5.uic import loadUi
 
 class VistaBienvenida(QMainWindow):

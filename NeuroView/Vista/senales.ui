@@ -155,8 +155,8 @@ background-color: white;</string>
     <widget class="QSpinBox" name="spinCanalInicial">
      <property name="geometry">
       <rect>
-       <x>570</x>
-       <y>1180</y>
+       <x>580</x>
+       <y>1190</y>
        <width>42</width>
        <height>22</height>
       </rect>

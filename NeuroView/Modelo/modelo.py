@@ -201,7 +201,25 @@ class Modelo:
         ax.grid(True)
         fig.tight_layout()
         return fig
- 
+    def GraficaOriginal(self,inicio,fin):
+        if self.senalObj is None:
+            return None
+        segmento = self.senalObj.seleccionarCanales(inicio, fin)
+        fig, ax = plt.subplots(figsize=(10, 4))
+        for i, canal in enumerate(segmento):
+            # Tu misma fórmula matemática de separación para que no se encimen:
+            desplazamiento = i * np.max(np.abs(segmento)) * 2
+            ax.plot(canal + desplazamiento, label=f"Canal {inicio + i}")
+
+        ax.set_title(f"Señales Originales Crudas — Canales {inicio} a {fin}")
+        ax.set_xlabel("Muestras")
+        ax.set_ylabel("Amplitud")
+        ax.legend(loc="upper right", fontsize=7)
+        ax.grid(True)
+        
+        fig.tight_layout()
+        return fig
+
     def agregarRuido(self, canal):
         #toma un canal de la señal 2D, le suma ruido gaussiano y muestra en dos subplots la señal original y la modificada.
         

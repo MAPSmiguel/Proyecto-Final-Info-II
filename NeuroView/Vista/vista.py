@@ -232,7 +232,18 @@ class VistaSenales(QMainWindow):
             QVBoxLayout(self.widgetGraficaProcesada)
 
         self.widgetGraficaProcesada.layout().addWidget(canvas)
-        
+    def canvasoriginal(self, canvas):
+        if self.widgetGraficaOriginal.layout() is not None:
+            while self.widgetGraficaOriginal.layout().count():
+                item = self.widgetGraficaOriginal.layout().takeAt(0)
+                if item.widget():
+                    item.widget().deleteLater()
+        else:
+            from PyQt5.QtWidgets import QVBoxLayout
+            QVBoxLayout(self.widgetGraficaOriginal)
+
+        self.widgetGraficaOriginal.layout().addWidget(canvas)
+
 class VistaDatos(QMainWindow):
 
     def __init__(self):

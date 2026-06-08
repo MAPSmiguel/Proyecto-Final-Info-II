@@ -151,7 +151,17 @@ class Controlador:
             print("Los promedios y desviaciones estan listos para graficar con stem.")
             # Aquí se llama a la función de la vista para graficar prom_v y des_v con stem
             self.__vistaSenales.graficar_stem(prom_v, des_v)
-        # si el usuario no selecciona ejes, se verifica entonces si quiere seleccionar canales
+            
+            
+            figura_original = self.__modelo.GraficaOriginal(inicio, fin)
+            if figura_original:
+                canvas_orig = FigureCanvas(figura_original)
+                self.__vistaSenales.canvasoriginal(canvas_orig)
+            # si el usuario no selecciona ejes, se verifica entonces si quiere seleccionar canales
+        
+        
+        
+        
         elif self.__vistaSenales.radioCanales.isChecked():
             inicio = self.__vistaSenales.spinInicio.value()
             fin = self.__vistaSenales.spinFin.value()

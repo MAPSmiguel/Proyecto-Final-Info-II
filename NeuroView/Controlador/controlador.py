@@ -138,7 +138,8 @@ class Controlador:
             return
         # en este punto nos ayudamos para verificar que el usuario si seleccionó el RadioButton de ejes
         if self.__vistaSenales.radioEje0.isChecked() or self.__vistaSenales.radioEje1.isChecked() or self.__vistaSenales.radioEje2.isChecked():
-            
+            inicio = self.__vistaSenales.spinCanalInicial.value()
+            fin = self.__vistaSenales.spinCanalFinal.value()
             # aqui se revisa cuál de los tres ejes seleccionó
             if self.__vistaSenales.radioEje0.isChecked():
                 eje_elegido = 0
@@ -204,7 +205,7 @@ class Controlador:
         #FigureCanvas  es una función de matplotlib, 
         #la verdad es muy util ya que toma la figura de matplotlib y la transforma en un widget de pyQt, 
         #en otras palabras es como si rellenara el marco blanco de QTdesigner (hay que hacer una importacion para usarla)
-#revisar  
+  
     def cargarTabulares(self):
         # esta parte asegura que la ventana de datos esté activa
         if self.__vistaDatos is None:
@@ -238,7 +239,7 @@ class Controlador:
             self.__vistaDatos.mostrarEstadisticasTablas(info_tabla, estadisticas_tabla)
             
             print(f"Archivo cargado correctamente. Tablas estadísticas y ComboBox actualizados.") 
-#REVISAR
+
     def procesarFiltro_tabla(self):
         if self.__vistaDatos is None or not hasattr(self.__modelo, 'tabularObj') or self.__modelo.tabularObj is None:
             return
@@ -246,8 +247,6 @@ class Controlador:
         # se lee los combos() de la vista datos
         c1 = self.__vistaDatos.cmbX.currentText()
         c2 = self.__vistaDatos.cmbY.currentText()
-        
-        
         df_recortado = self.__modelo.tabularObj.filtrar_col(c1, c2)
         #resultados en la tabla de la vista de datos
         self.interfazdf(df_recortado)

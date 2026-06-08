@@ -17,9 +17,7 @@ class VistaBienvenida(QMainWindow):
         loadUi("Vista/Bienvenida.ui", self)
 
         #  Si se pulsa ingresar llamamos al metodo ingresar
-        self.btnIngresar.clicked.connect(
-            self.ingresar
-        )
+        self.btnIngresar.clicked.connect(self.ingresar)
 
     def ingresar(self):
         # Leemos lo que escribio el usuario en los campos del .ui

@@ -33,6 +33,7 @@ class Modelo:
  
         # Atributo donde guardaremos la señal .mat
         self.senalObj = None
+        self.tabularObj = None
 
     def validarUsuario(self, nombre, password, rol):
         self.cursor.execute(

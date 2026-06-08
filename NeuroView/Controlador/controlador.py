@@ -133,6 +133,9 @@ class Controlador:
             print(f"Archivo cargado\nDimensiones 2D: {forma_2d}")
 
     def procesar_senal(self):
+        if self.__modelo.senalObj is None:
+            QMessageBox.warning(self.__vistaSenales,"Advertencia","Debe cargar una señal primero")
+            return
         # en este punto nos ayudamos para verificar que el usuario si seleccionó el RadioButton de ejes
         if self.__vistaSenales.radioEje0.isChecked() or self.__vistaSenales.radioEje1.isChecked() or self.__vistaSenales.radioEje2.isChecked():
             
@@ -149,7 +152,12 @@ class Controlador:
             # Aquí se llama a la función de la vista para graficar prom_v y des_v con stem
             self.__vistaSenales.graficar_stem(prom_v, des_v)
         # si el usuario no selecciona ejes, se verifica entonces si quiere seleccionar canales
-     
+        elif self.__vistaSenales.radioCanales.isChecked():
+            inicio = self.__vistaSenales.spinInicio.value()
+            fin = self.__vistaSenales.spinFin.value()
+            figura = self.__modelo.procesarCanales(inicio, fin)
+            canvas = FigureCanvas(figura)
+            self.__vistaSenales.graficadoraCanvas(canvas)
     # datos tabulares
     def cargarCSV(self):
         ruta_archivo, _ = QFileDialog.getOpenFileName(self.__vistaDatos, "Seleccionar Archivo CSV", "", "Archivos CSV (*.csv)")
@@ -170,7 +178,7 @@ class Controlador:
         if ruta_archivo:
             try:
                 columnas = self.__modelo.cargarExcel(ruta_archivo)
-                info_df, describe_df = self.__modelo.info_general()
+                info_df, describe_df = self.__modelo.obtenerInfoDescribe()
                 self.__vistaDatos.actualizarComboboxes(columnas)
                 self.__vistaDatos.mostrarDatos(info_df, describe_df)
             except Exception as e:

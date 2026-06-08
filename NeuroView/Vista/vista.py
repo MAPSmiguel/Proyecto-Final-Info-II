@@ -223,7 +223,18 @@ class VistaSenales(QMainWindow):
         self.__controlador = c
 # El usuario carga un CSV o Excel con datos medicos,
 # ve la info/describe del archivo, hace plots y scatter.
+    def graficadoraCanvas(self, canvas):
+        if self.widgetGraficaProcesada.layout() is not None:
+            while self.widgetGraficaProcesada.layout().count():
+                item = self.widgetGraficaProcesada.layout().takeAt(0)
+                if item.widget():
+                    item.widget().deleteLater()
+        else:
+            from PyQt5.QtWidgets import QVBoxLayout
+            QVBoxLayout(self.widgetGraficaProcesada)
 
+        self.widgetGraficaProcesada.layout().addWidget(canvas)
+        
 class VistaDatos(QMainWindow):
 
     def __init__(self):
@@ -234,15 +245,18 @@ class VistaDatos(QMainWindow):
         self.btnCargarExcel.clicked.connect(self.cargarExcel)
         self.btnScatter.clicked.connect(self.scatter)
     #esta parte es para conectar los botenes y cargar la vista de de datos.iu
-    def cargarDatosTabulares(self):
-        self.__controlador.cargarTabulares()
+    def cargarCSV(self):
+        self.__controlador.cargarCSV()
+
+    def cargarExcel(self):
+        self.__controlador.cargarExcel()
 
     def scatter(self):
         # Leemos las dos columnas elegidas por el usuario en los combos
         self.__controlador.graficarScatter()
 
-    def setControlador(self):
-        self.__controlador.graficarScatter()
+    def setControlador(self,c):
+        self.__controlador = c
 
     def mostrarDatos(self,info_df, describe_df):
     #para la tabla de estaditicas
@@ -294,19 +308,16 @@ class VistaDatos(QMainWindow):
 
         # 5. ¡Listo! Añadimos el gráfico al espacio de la pantalla
         layout.addWidget(canvas)
-        
-    def graficadoraCanvas(self,canvas):
-        # aqui si limpian los graficos si ya existen para que no se superpongan
-        if self.widget.layout() is not None:
-            # Esta línea borra limpiamente el gráfico anterior de la pantalla
-            while self.widget.layout().count():
-                item = self.widget.layout().takeAt(0)
+    def graficadoraCanvas(self, canvas):
+
+        if self.widgetGraficaProcesada.layout() is not None:
+
+            while self.widgetGraficaProcesada.layout().count():
+                item = self.widgetGraficaProcesada.layout().takeAt(0)
+
                 if item.widget():
                     item.widget().deleteLater()
         else:
-            # Si es la primera vez que graficamos, le creamos un contenedor interno (Layout)
-            layout_interno = QVBoxLayout(self.widget)
-            self.widget.setLayout(layout_interno)
-        
-        # Metemos el lienzo (canvas) que nos pasaron dentro de nuestro 'widget'
-        self.widget.layout().addWidget(canvas)# con esta parte se evita que salgan ventanas emergentes plt.show()
+            QVBoxLayout(self.widgetGraficaProcesada)
+        self.widgetGraficaProcesada.layout().addWidget(canvas)
+    

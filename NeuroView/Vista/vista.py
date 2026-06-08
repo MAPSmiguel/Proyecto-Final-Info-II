@@ -153,6 +153,17 @@ class VistaSenales(QMainWindow):
             for i in reversed(range(layout.count())):
                 layout.itemAt(i).widget().setParent(None)
         layout.addWidget(canvas)
+     def canvasoriginal(self, canvas):
+        # NOTA: Asegúrate de que en tu archivo "senales.ui" de QtDesigner 
+        # el widget blanco para la señal cruda se llame exactamente "widgetGraficaOriginal"
+        if self.widgetGraficaOriginal.layout() is None:
+            layout = QVBoxLayout(self.widgetGraficaOriginal)
+            self.widgetGraficaOriginal.setLayout(layout)
+        else:
+            layout = self.widgetGraficaOriginal.layout()
+            for i in reversed(range(layout.count())):
+                layout.itemAt(i).widget().setParent(None)
+        layout.addWidget(canvas)
  
  
 class VistaDatos(QMainWindow):

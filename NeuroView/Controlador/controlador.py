@@ -144,7 +144,7 @@ class Controlador:
             else:
                 eje_elegido = 2
             #luego se llama al metodo promYdesviación
-            prom_v, des_v = self.__modelo.senalObj.promYdesviación(eje_elegido)
+            prom_v, des_v = self.__modelo.senalObj.promYdesviacion(eje_elegido)
             print("Los promedios y desviaciones estan listos para graficar con stem.")
             # Aquí se llama a la función de la vista para graficar prom_v y des_v con stem
             self.__vistaSenales.graficar_stem(prom_v, des_v)
@@ -176,7 +176,7 @@ class Controlador:
             except Exception as e:
                 QMessageBox.critical(self.__vistaDatos, "Error", f"Error al procesar el Excel: {str(e)}")
 
-    def graficarScatter(self, x, y):
+    def graficarScatter(self):
         x = self.__vistaDatos.cmbX.currentText()
         y = self.__vistaDatos.cmbY.currentText()
         figura = self.__modelo.graficarScatter(x, y)

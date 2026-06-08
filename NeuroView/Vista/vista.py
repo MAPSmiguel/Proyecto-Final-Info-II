@@ -234,18 +234,15 @@ class VistaDatos(QMainWindow):
         self.btnCargarExcel.clicked.connect(self.cargarExcel)
         self.btnScatter.clicked.connect(self.scatter)
     #esta parte es para conectar los botenes y cargar la vista de de datos.iu
-    def cargarCSV(self):
-        self.__controlador.cargarCSV()
-
-    def cargarExcel(self):
-        self.__controlador.cargarExcel()
+    def cargarDatosTabulares(self):
+        self.__controlador.cargarTabulares()
 
     def scatter(self):
         # Leemos las dos columnas elegidas por el usuario en los combos
         self.__controlador.graficarScatter()
 
-    def setControlador(self, c):
-        self.__controlador = c
+    def setControlador(self):
+        self.__controlador.graficarScatter()
 
     def mostrarDatos(self,info_df, describe_df):
     #para la tabla de estaditicas

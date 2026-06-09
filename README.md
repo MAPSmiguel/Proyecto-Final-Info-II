@@ -6,8 +6,8 @@
 ---
 
 # Integrantes
-* **Danna Julieta** - correo
-* **Miguel** - correo
+* **Danna Julieta** - julieta.matallana@udea.edu.co
+* **Miguel** - miguel.piedrahita3@udea.edu.co
 * **Michel Daniela Tobón Roldán** - michel.troldan@udea.edu.co
 
 ---
